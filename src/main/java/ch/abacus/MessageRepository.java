@@ -30,11 +30,11 @@ public class MessageRepository {
     private final Map<UUID, Message> messages = new HashMap<>();
 
     public Optional<Message> getMessage(UUID uuid) {
-        return null;
+        return Optional.ofNullable(messages.get(uuid));
     }
 
     public void addMessage(Message message) {
-
+        messages.put(message.getId(), message);
     }
 
     public void deleteMessage(UUID uuid) {
