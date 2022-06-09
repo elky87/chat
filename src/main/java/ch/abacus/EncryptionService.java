@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 public class EncryptionService {
 
     public String generateLink(String unencryptedMessage) {
-        String urlOfMessage = "";
-        return urlOfMessage;
+        String keyForMessage = "12345";
+        return keyForMessage;
     }
 
     public String getMessage(String key) {
