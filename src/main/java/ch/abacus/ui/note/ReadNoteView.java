@@ -37,7 +37,7 @@ public class ReadNoteView extends VerticalLayout implements HasUrlParameter<Stri
   private final HorizontalLayout passwortLayout;
   private final TextArea messageLabel;
 
-  private UUID currentUuid;
+  private Message currentMessage;
 
   public ReadNoteView(MessageService messageService,
                       EncryptionService encryptionService) {
@@ -67,7 +67,7 @@ public class ReadNoteView extends VerticalLayout implements HasUrlParameter<Stri
 
     button.addClickListener(event -> {
 
-      messageService.getMessage(currentUuid).ifPresent(message -> {
+      Optional.ofNullable(currentMessage).ifPresent(message -> {
         try {
           final String decrypt = encryptionService.decrypt(message.getContent(), Optional.ofNullable(passwort.getValue()).orElse(""));
           messageLabel.setValue(decrypt);
@@ -86,11 +86,11 @@ public class ReadNoteView extends VerticalLayout implements HasUrlParameter<Stri
   public void setParameter(BeforeEvent beforeEvent, String uuid) {
     if (uuid != null) {
       try {
-        currentUuid = UUID.fromString(uuid);
-        final Optional<Message> message = messageService.getMessage(currentUuid);
-        if (message
-            .isPresent()) {
-          String decrypt = encryptionService.decrypt(message.get().getContent(), "");
+        UUID fromString = UUID.fromString(uuid);
+        final Optional<Message> message = messageService.getMessage(fromString);
+        if (message.isPresent()) {
+          currentMessage = message.get();
+          String decrypt = encryptionService.decrypt(currentMessage.getContent(), "");
           messageLabel.setValue(decrypt);
           messageLabel.setVisible(true);
         } else {
