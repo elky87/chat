@@ -26,6 +26,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.UUID;
 
 @Service
 public class EncryptionService {
@@ -36,7 +37,7 @@ public class EncryptionService {
         return new Message();
     }
 
-    public Message getMessage(String key) {
+    public Message getMessage(UUID uuid) {
         return new Message();
     }
 
