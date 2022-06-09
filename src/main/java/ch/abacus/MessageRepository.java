@@ -38,7 +38,7 @@ public class MessageRepository {
     }
 
     public void deleteMessage(UUID uuid) {
-
+        messages.remove(uuid);
     }
 
     public List<Message> getAllMessages() {
