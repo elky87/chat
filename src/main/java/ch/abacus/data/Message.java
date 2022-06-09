@@ -32,4 +32,8 @@ public class Message {
     return content;
   }
 
+  public boolean isDurationOver() {
+    Duration durationBetweenNowAndCreation = Duration.between(timestamp, Instant.now());
+    return selfDestruct.compareTo(durationBetweenNowAndCreation) < 0;
+  }
 }
