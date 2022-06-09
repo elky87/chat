@@ -12,18 +12,18 @@
  */
 package ch.abacus;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import ch.abacus.data.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @EnableScheduling
-public class MessageDeleteScheduler implements Runnable {
+public class MessageDeleteScheduler {
 
     private final MessageRepository repo;
 
@@ -35,25 +35,11 @@ public class MessageDeleteScheduler implements Runnable {
     @Scheduled(fixedRate = 10000)
     public void cleanMessages() {
         List<Message> toBeDeletedMessages = repo.getAllMessages().stream()
-                                                .filter(Message::isDurationOver)
-                                                .collect(Collectors.toList());
+                .filter(Message::isDurationOver)
+                .collect(Collectors.toList());
 
         for (Message toBeDeletedMessage : toBeDeletedMessages) {
             repo.deleteMessage(toBeDeletedMessage.getId());
         }
-    }
-
-
-    @Override
-    public void run() {
-
-        List<Message> toBeDeletedMessages = repo.getAllMessages().stream()
-                                                .filter(Message::isDurationOver)
-                                                .collect(Collectors.toList());
-
-        for (Message toBeDeletedMessage : toBeDeletedMessages) {
-            repo.deleteMessage(toBeDeletedMessage.getId());
-        }
-
     }
 }
