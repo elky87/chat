@@ -31,6 +31,10 @@ public class ChatService {
         chatRoom.setName(name);
     }
 
+    public String getName() {
+        return chatRoom.getName();
+    }
+
     public void setPassword(String password) {
         chatRoom.setPassword(password);
     }
