@@ -12,20 +12,66 @@
  */
 package ch.abacus;
 
+import ch.abacus.data.Message;
 import org.springframework.stereotype.Service;
+
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.time.Duration;
+import java.util.Base64;
 
 @Service
 public class EncryptionService {
 
-    public String generateLink(String unencryptedMessage) {
-        String keyForMessage = "12345";
-        return keyForMessage;
+    private final static String SALT = "alsdkfqthlehbkjvh83qljr51234outr18gh1hg1g";
+
+    public Message generateMessage(String unencryptedMessage, String password, Duration duration) {
+        return new Message();
     }
 
-    public String getMessage(String key) {
-
-
-        return "";
+    public Message getMessage(String key) {
+        return new Message();
     }
 
+
+    public String encrypt(String algorithm, String input, SecretKey key,
+                          IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+        byte[] cipherText = cipher.doFinal(input.getBytes());
+        return Base64.getEncoder()
+                .encodeToString(cipherText);
+    }
+
+    public String decrypt(String algorithm, String cipherText, SecretKey key,
+                          IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        byte[] plainText = cipher.doFinal(Base64.getDecoder()
+                .decode(cipherText));
+        return new String(plainText);
+    }
+
+
+    public SecretKey getKeyFromPassword(String password)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), SALT.getBytes(), 65536, 256);
+        return new SecretKeySpec(factory.generateSecret(spec)
+                .getEncoded(), "AES");
+    }
 }
