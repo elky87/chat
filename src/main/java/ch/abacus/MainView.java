@@ -1,20 +1,14 @@
 package ch.abacus;
 
-import ch.abacus.data.ChatRoom;
-import ch.abacus.view.ChatRoomView;
+import ch.abacus.ui.note.CreateNoteView;
 import ch.abacus.view.ChatView;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.NavigationEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +29,9 @@ import reactor.core.publisher.UnicastProcessor;
  */
 @Route
 @PWA(name = "AbaChat Application",
-    shortName = "AbaChat App",
-    description = "stat page to choose note or chat",
-    enableInstallPrompt = false)
+        shortName = "AbaChat App",
+        description = "stat page to choose note or chat",
+        enableInstallPrompt = false)
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 @CssImport("./styles/styles.css")
@@ -56,11 +50,29 @@ public class MainView extends VerticalLayout {
         H1 header = createHeader();
         add(header);
 
-        Button chatButton = new Button("Chat");
-        chatButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> getUI().ifPresent(ui -> ui.navigate("chat")));;
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setAlignItems(Alignment.CENTER);
+        layout.setSpacing(true);
+        layout.setWidthFull();
+        layout.setHeight("500px");
 
+        Button noteButton = new Button("Ask - Note");
 
-        add(chatButton);
+        noteButton.setWidth(50, Unit.PERCENTAGE);
+        noteButton.setHeight(50, Unit.PERCENTAGE);
+
+        noteButton.addClickListener(e ->
+                noteButton.getUI().ifPresent(ui -> ui.navigate(CreateNoteView.class)));
+
+        Button chatButton = new Button("Ask - Chat");
+        chatButton.setWidth(50, Unit.PERCENTAGE);
+        chatButton.setHeight(50, Unit.PERCENTAGE);
+        chatButton.addClickListener(e ->
+                chatButton.getUI().ifPresent(ui -> ui.navigate(ChatView.class)));
+
+        layout.add(noteButton, chatButton);
+
+        add(layout);
     }
 
     private H1 createHeader() {
