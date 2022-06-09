@@ -32,12 +32,15 @@ import java.util.UUID;
 public class EncryptionService {
 
     private final static String SALT = "alsdkfqthlehbkjvh83qljr51234outr18gh1hg1g";
+    private final MessageRepository messageRepository = new MessageRepository();
 
     public Message generateMessage(String unencryptedMessage, String password, Duration duration) {
         return new Message();
     }
 
     public Message getMessage(UUID uuid) {
+
+        // delete message
         return new Message();
     }
 
