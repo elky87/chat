@@ -13,5 +13,6 @@ public class ChatRoom {
   private String name;
   private Set<User> users;
   private List<Message> messages;
+  private String password;
 
 }
