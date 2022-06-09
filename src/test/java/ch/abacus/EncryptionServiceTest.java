@@ -24,16 +24,21 @@ import java.time.Duration;
 import ch.abacus.data.Message;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 class EncryptionServiceTest {
 
+    @Autowired
+    EncryptionService encryptionService;
+
     @Test
-    void encrypt_decrypt() throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    void encrypt_decrypt() throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
+                                  BadPaddingException, InvalidKeySpecException, InvalidKeyException {
 
         String password = "secret";
         String originalMessage = "Geheime Nachricht";
-
-        EncryptionService encryptionService = new EncryptionService();
 
         String encryptedMessage = encryptionService.encrypt(originalMessage, password);
         String decryptedMessage = encryptionService.decrypt(encryptedMessage, password);
@@ -43,7 +48,6 @@ class EncryptionServiceTest {
 
     @Test
     void generateMessage() throws Exception {
-        final EncryptionService encryptionService = new EncryptionService();
         final Message message = encryptionService.generateMessage("geheim", "password", Duration.ZERO, false);
         Assertions.assertEquals(encryptionService.encrypt("geheim", "password"), message.getContent());
         Assertions.assertEquals(Duration.ZERO, message.getSelfDestruct());

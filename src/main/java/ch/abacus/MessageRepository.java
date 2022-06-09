@@ -12,20 +12,18 @@
  */
 package ch.abacus;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import ch.abacus.data.Message;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
-
+@Component
 public class MessageRepository {
-
-    private static final MessageRepository INSTANCE = new MessageRepository();
-
-    public static MessageRepository getInstance() {
-        return INSTANCE;
-    }
-
-    private MessageRepository() {
-    }
 
     private final Map<UUID, Message> messages = new HashMap<>();
 

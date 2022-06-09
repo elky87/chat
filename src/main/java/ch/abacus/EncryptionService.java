@@ -12,10 +12,12 @@
  */
 package ch.abacus;
 
-import ch.abacus.data.Message;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -30,12 +32,21 @@ import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
+import ch.abacus.data.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 @Service
 public class EncryptionService {
 
     private final static String SALT = "alsdkfqthlehbkjvh83qljr51234outr18gh1hg1g";
 
-    private MessageRepository messageRepository = MessageRepository.getInstance();
+    private MessageRepository messageRepository;
+
+    @Autowired
+    public EncryptionService(final MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
 
     public Message generateMessage(String unencryptedMessage, String password, Duration duration, boolean selfDestructAfterRead) throws Exception {
         final String encryptedMessage = encrypt(unencryptedMessage, password);
