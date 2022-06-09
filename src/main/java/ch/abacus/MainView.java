@@ -79,7 +79,7 @@ public class MainView extends VerticalLayout {
     }
 
     private H1 createHeader() {
-        H1 header = new H1("Ask");
+        H1 header = new H1("Ask - Abacus sichere Kommunikation");
         header.getElement().getThemeList().add("dark");
         return header;
     }
