@@ -39,12 +39,13 @@ public class ChatService {
         chatRoom.getUsers().add(user);
     }
 
-    public void addMessage(String message) {
-        messageService.generateMessage(message, chatRoom.getPassword(), Duration.ofMinutes(1), false);
+    public void addMessage(String message, User user) {
+        addMessage(message, Duration.ofMinutes(1), user);
     }
 
-    public void addMessage(String message, Duration duration) {
-        messageService.generateMessage(message, chatRoom.getPassword(), duration, false);
+    public void addMessage(String message, Duration duration, User user) {
+        Message encrMessage = messageService.generateMessage(message, chatRoom.getPassword(), duration, false);
+        encrMessage.setUser(user);
     }
 
     public List<Message> getMessages() {
