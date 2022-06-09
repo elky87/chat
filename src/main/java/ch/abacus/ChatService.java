@@ -40,7 +40,7 @@ public class ChatService {
     }
 
     public void addMessage(String message, User user) {
-        addMessage(message, Duration.ofMinutes(1), user);
+        addMessage(message, Duration.ofSeconds(20), user);
     }
 
     public void addMessage(String message, Duration duration, User user) {
@@ -51,7 +51,12 @@ public class ChatService {
     public List<Message> getMessages() {
         return messageRepository.getAllMessages()
                 .stream()
-                .peek(encryptedMessage -> encryptedMessage.setContent(encryptionService.decryptWithoutException(encryptedMessage.getContent(), chatRoom.getPassword())))
+                .map(encryptedMessage -> {
+                    String decryptedMessage = encryptionService.decryptWithoutException(encryptedMessage.getContent(), chatRoom.getPassword());
+                    Message message = new Message(encryptedMessage.getUser(), decryptedMessage);
+                    message.setTimestamp(encryptedMessage.getTimestamp());
+                    return message;
+                })
                 .sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList());
     }

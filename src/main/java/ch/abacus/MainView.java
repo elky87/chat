@@ -1,6 +1,8 @@
 package ch.abacus;
 
+import ch.abacus.data.ChatRoom;
 import ch.abacus.ui.note.CreateNoteView;
+import ch.abacus.view.ChatRoomView;
 import ch.abacus.view.ChatView;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;

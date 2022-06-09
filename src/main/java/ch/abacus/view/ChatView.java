@@ -4,9 +4,11 @@ import ch.abacus.ChatService;
 import ch.abacus.EncryptionService;
 import ch.abacus.MessageService;
 import ch.abacus.data.ChatRoom;
+import ch.abacus.data.Message;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -19,9 +21,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.UnicastProcessor;
 
 @Route("chat")
+@CssImport("./styles/shared-styles.css")
+@CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
+@CssImport("./styles/styles.css")
 public class ChatView extends VerticalLayout {
-
-
 
   private final ChatService chatService;
   private final EncryptionService encryptionService;
@@ -40,11 +43,15 @@ public class ChatView extends VerticalLayout {
     this.publisher = publisher;
     this.messages = messages;
 
-    addClassName("create-chat-view");
+    setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+    addClassName("main-view");
 
-    H1 header = createHeader();
+    H1 header = new H1("AskChat");
+    header.getElement().getThemeList().add("dark");
+    add(header);
+    
     HorizontalLayout chatRoomLayout = createGenerateChatRoomLayout();
-    add(header, chatRoomLayout);
+    add(chatRoomLayout);
   }
 
   private HorizontalLayout createGenerateChatRoomLayout() {
@@ -62,7 +69,7 @@ public class ChatView extends VerticalLayout {
     createChatRoom.addClickListener(click -> {
       chatService.setPassword(chatRoomPassword.getValue());
       chatService.setName(chatRoomName.getValue());
-      getUI().ifPresent(ui -> ui.navigate("chatroom"));
+      getUI().ifPresent(ui -> ui.navigate(ChatRoomView.class));
     });
 
     layout.add(chatRoomName, chatRoomPassword, createChatRoom);
