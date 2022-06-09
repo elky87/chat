@@ -15,11 +15,11 @@ import reactor.core.publisher.UnicastProcessor;
 public class Application extends SpringBootServletInitializer {
 
     @Bean
-    UnicastProcessor<Message> publisher(){
+    UnicastProcessor<String> publisher(){
         return UnicastProcessor.create();
     }
     @Bean
-    Flux<Message> messages(UnicastProcessor<Message> publisher) {
+    Flux<String> messages(UnicastProcessor<String> publisher) {
         return publisher.replay(30).autoConnect();
     }
 

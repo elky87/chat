@@ -15,4 +15,11 @@ public class ChatRoom {
   private List<Message> messages;
   private String password;
 
+  public ChatRoom() {
+  }
+
+  public ChatRoom(String name, String password) {
+    this.name = name;
+    this.password = password;
+  }
 }

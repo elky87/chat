@@ -27,6 +27,10 @@ public class ChatService {
         this.encryptionService = encryptionService;
     }
 
+    public void setName(String name) {
+        chatRoom.setName(name);
+    }
+
     public void setPassword(String password) {
         chatRoom.setPassword(password);
     }
