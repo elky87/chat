@@ -12,10 +12,12 @@
  */
 package ch.abacus;
 
-import ch.abacus.data.Message;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -25,23 +27,45 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
+
+import ch.abacus.data.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class EncryptionService {
 
     private final static String SALT = "alsdkfqthlehbkjvh83qljr51234outr18gh1hg1g";
+    @Autowired
     private final MessageRepository messageRepository = new MessageRepository();
 
-    public Message generateMessage(String unencryptedMessage, String password, Duration duration) {
-        return new Message();
+    public Message generateMessage(String unencryptedMessage, String password, Duration duration, boolean selfDestructAfterRead) throws Exception {
+        final String encryptedMessage = encrypt(unencryptedMessage, password);
+        final Message message = new Message();
+        message.setId(UUID.randomUUID());
+        message.setContent(encryptedMessage);
+        message.setTimestamp(Instant.now());
+        message.setSelfDestruct(duration);
+        message.setSelfDestructAfterRead(selfDestructAfterRead);
+        messageRepository.addMessage(message);
+        return message;
     }
 
     public Message getMessage(UUID uuid) {
+        final Optional<Message> message = messageRepository.getMessage(uuid);
 
-        // delete message
-        return new Message();
+        if (message.isPresent() && message.get().isDurationOver()) {
+            messageRepository.deleteMessage(message.get().getId());
+            return new Message();
+        }
+        if (message.isPresent() && (message.get().isSelfDestructAfterRead())) {
+            messageRepository.deleteMessage(uuid);
+        }
+        return message.orElse(new Message());
     }
 
     public String encrypt(String input, String password) throws NoSuchPaddingException, NoSuchAlgorithmException,
