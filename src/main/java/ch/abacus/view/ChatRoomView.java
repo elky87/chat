@@ -12,19 +12,21 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.messages.MessageInput;
 import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.UnicastProcessor;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +45,7 @@ public class ChatRoomView extends VerticalLayout {
   private final MessageList messageList;
   private final List<User> users = new ArrayList<>();
   private ComboBox<User> userSelection;
+  private NumberField deleteMessageTime;
 
   public ChatRoomView(@Autowired ChatService chatService,
                       @Autowired MessageService messageService,
@@ -57,20 +60,18 @@ public class ChatRoomView extends VerticalLayout {
     setDefaultHorizontalComponentAlignment(Alignment.CENTER);
     addClassName("main-view");
 
-    H1 header = new H1("AskChat");
+    H1 header = new H1("AskChat " + chatService.getName());
     header.getElement().getThemeList().add("dark");
     add(header);
 
     messageList = new MessageList();
 
-    add(createAddUserLayout(), messageList, createMessageInputLayout());
+    add(messageList, createMessageInputLayout(), createSettings());
     expand(messageList);
 
     messages.subscribe(empty -> {
-      List<MessageListItem> messageListItems;
-
       List<Message> currentMessages = chatService.getMessages();
-      messageListItems = currentMessages.stream()
+      List<MessageListItem> messageListItems = currentMessages.stream()
           .map(currentMessage -> new MessageListItem(currentMessage.getContent(), currentMessage.getTimestamp(), currentMessage.getUser().getName()))
           .collect(Collectors.toList());
       messageList.setItems(messageListItems);
@@ -79,6 +80,7 @@ public class ChatRoomView extends VerticalLayout {
 
   private HorizontalLayout createMessageInputLayout() {
     HorizontalLayout messageInputLayout = new HorizontalLayout();
+    messageInputLayout.setAlignItems(Alignment.CENTER);
     userSelection = new ComboBox<>();
     userSelection.setItemLabelGenerator((ItemLabelGenerator<User>) User::getName);
     userSelection.setPlaceholder("Benutzer auswählen");
@@ -89,30 +91,38 @@ public class ChatRoomView extends VerticalLayout {
   private MessageInput createMessageInput() {
     MessageInput messageInput = new MessageInput();
     messageInput.addSubmitListener(submitEvent -> {
-      chatService.addMessage(submitEvent.getValue(), userSelection.getValue());
+      Double time = deleteMessageTime.getValue();
+      chatService.addMessage(submitEvent.getValue(), Duration.ofSeconds(time != null && time > 0 ? time.longValue() : 60), userSelection.getValue());
       publisher.onNext(submitEvent.getValue());
     });
     return messageInput;
   }
 
-  private HorizontalLayout createAddUserLayout() {
-    HorizontalLayout layout = new HorizontalLayout();
+  private VerticalLayout createSettings() {
+    Label settings = new Label("Einstellungen");
 
     TextField userName = new TextField();
     userName.setPlaceholder("Benutzername");
-
-    PasswordField userPassword = new PasswordField();
-    userPassword.setPlaceholder("Passwort");
 
     Button addUserButton = new Button("Benutzer hinzufügen");
     addUserButton.addClickShortcut(Key.ENTER);
     addUserButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     addUserButton.addClickListener(click -> {
-      users.add(new User(userName.getValue(), userPassword.getValue()));
+      users.add(new User(userName.getValue(), ""));
+      User currentUser = userSelection.getValue();
       userSelection.setItems(users);
+      userSelection.setValue(currentUser != null ? currentUser : users.stream().findFirst().get());
+      userName.clear();
     });
 
-    layout.add(userName, userPassword, addUserButton);
+    HorizontalLayout createUserLayout = new HorizontalLayout();
+    createUserLayout.add(userName, addUserButton);
+
+    deleteMessageTime = new NumberField("Löschen nach");
+    deleteMessageTime.setPlaceholder("Zeit in s");
+    VerticalLayout layout = new VerticalLayout();
+    layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+    layout.add(settings, createUserLayout, deleteMessageTime);
     return layout;
   }
 }

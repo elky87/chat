@@ -10,16 +10,8 @@ import java.util.UUID;
 public class ChatRoom {
 
   private UUID id;
-  private String name;
+  private String name = "";
   private Set<User> users;
   private List<Message> messages;
   private String password;
-
-  public ChatRoom() {
-  }
-
-  public ChatRoom(String name, String password) {
-    this.name = name;
-    this.password = password;
-  }
 }
