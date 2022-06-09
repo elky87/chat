@@ -55,17 +55,17 @@ public class EncryptionService {
         return message;
     }
 
-    public Message getMessage(UUID uuid) {
+    public Optional<Message> getMessage(UUID uuid) {
         final Optional<Message> message = messageRepository.getMessage(uuid);
 
         if (message.isPresent() && message.get().isDurationOver()) {
             messageRepository.deleteMessage(message.get().getId());
-            return new Message();
+            return Optional.empty();
         }
         if (message.isPresent() && (message.get().isSelfDestructAfterRead())) {
             messageRepository.deleteMessage(uuid);
         }
-        return message.orElse(new Message());
+        return message;
     }
 
     public String encrypt(String input, String password) throws NoSuchPaddingException, NoSuchAlgorithmException,
