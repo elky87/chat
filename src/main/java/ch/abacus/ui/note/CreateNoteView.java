@@ -18,7 +18,7 @@ public class CreateNoteView extends VerticalLayout {
     setDefaultHorizontalComponentAlignment(Alignment.CENTER);
     addClassName("main-view");
 
-    H1 header = new H1("AbaNote");
+    H1 header = new H1("AskNote");
     header.getElement().getThemeList().add("dark");
     add(header);
 

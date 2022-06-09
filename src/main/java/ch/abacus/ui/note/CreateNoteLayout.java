@@ -2,6 +2,7 @@ package ch.abacus.ui.note;
 
 import ch.abacus.MessageService;
 import ch.abacus.data.Message;
+import ch.abacus.ui.PasswordElement;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Unit;
@@ -28,7 +29,7 @@ public class CreateNoteLayout extends Div {
   private Checkbox deleteOnRead;
   private Button createButton;
   private TextArea messageField;
-  private TextField passwordField;
+  private PasswordElement passwordField;
 
   public CreateNoteLayout(MessageService messageService) {
     this.messageService = messageService;
@@ -37,17 +38,13 @@ public class CreateNoteLayout extends Div {
 
   private void init() {
     messageField = createMessageField();
-    passwordField = createPasswordField();
+    passwordField = new PasswordElement();
     final Component durationField = createDurationField();
     createButton = getCreateButton();
 
     add(messageField, passwordField, durationField, createButton);
   }
 
-  private TextField createPasswordField() {
-    TextField messageField = new TextField("Passwort");
-    return messageField;
-  }
 
   private TextArea createMessageField() {
     TextArea messageField = new TextArea("Nachricht");
@@ -68,7 +65,7 @@ public class CreateNoteLayout extends Div {
     createButton.addClickListener(click -> {
       try {
         final Message message = messageService
-            .generateMessage(messageField.getValue(), passwordField.getValue(), getDuration(), deleteOnRead.getValue());
+            .generateMessage(messageField.getValue(), passwordField.getPassword(), getDuration(), deleteOnRead.getValue());
         consumer.accept(message);
       } catch (Exception e) {
         throw new RuntimeException(e);
@@ -107,7 +104,7 @@ public class CreateNoteLayout extends Div {
 
   public void clear(){
     messageField.setValue("");
-    passwordField.setValue("");
+    passwordField.clear();
   }
 
 }
