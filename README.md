@@ -48,3 +48,22 @@ The project follow Maven's [standard directory layout structure](https://maven.a
 - Find Add-ons at [vaadin.com/directory](https://vaadin.com/directory).
 - Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Discord channel](https://discord.gg/MYFq5RTbBn).
 - Report issues, create pull requests in [GitHub](https://github.com/vaadin/).
+
+## Secure note
+- Self-destruct
+  - After reading/requesting
+  - Duration
+- Confirm destroying
+- Destruction notification
+- Set custom password
+
+## Secure chat
+- Timestamp
+- User
+- Self-destruct
+  - Duration
+  - After reading/requesting (user specific)
+- Lock chat
+
+Support files?
+API for use without browser?
