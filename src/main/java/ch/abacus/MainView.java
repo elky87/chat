@@ -1,6 +1,7 @@
 package ch.abacus;
 
 import ch.abacus.data.Message;
+import ch.abacus.data.User;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -102,13 +103,13 @@ public class MainView extends VerticalLayout {
         sendButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         sendButton.addClickListener(click -> {
-            publisher.onNext(new Message(username, messageField.getValue()));
+            publisher.onNext(new Message(new User("bla", "bla"), messageField.getValue()));
             messageField.clear();
             messageField.focus();
 
             messages.subscribe(message -> {
                 messageList.add(
-                    new Paragraph(message.getUserName() + ": " +
+                    new Paragraph(message.getUser().getName() + ": " +
                                   message.getContent()));
             });
         });
