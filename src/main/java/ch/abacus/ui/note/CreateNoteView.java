@@ -26,6 +26,7 @@ public class CreateNoteView extends VerticalLayout {
     final CreateNoteLayout createNoteLayout = new CreateNoteLayout(messageService);
     resultLayout.addNewMessageListener(() -> {
       remove(resultLayout);
+      createNoteLayout.clear();
       add(createNoteLayout);
     });
     createNoteLayout.addCreateMessageListencer(message -> {

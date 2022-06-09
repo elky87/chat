@@ -3,6 +3,7 @@ package ch.abacus.ui.note;
 import ch.abacus.EncryptionService;
 import ch.abacus.MessageService;
 import ch.abacus.data.Message;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
@@ -23,6 +24,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,15 +55,15 @@ public class ReadNoteView extends VerticalLayout implements HasUrlParameter<Stri
 
     passwortLayout = new HorizontalLayout();
     TextField passwort = new TextField("Passwort");
-    passwortLayout.add(passwort);
-
     final Button button = new Button("Bestätigen");
 
-    passwortLayout.add(button);
+    passwortLayout.add(passwort, button);
+    passwortLayout.setAlignItems(Alignment.END);
     passwortLayout.setVisible(false);
     add(passwortLayout);
 
     messageLabel = new TextArea("Nachricht");
+    messageLabel.setMinWidth(40, Unit.REM);
     messageLabel.setVisible(false);
     add(messageLabel);
 
@@ -75,7 +77,7 @@ public class ReadNoteView extends VerticalLayout implements HasUrlParameter<Stri
           passwortLayout.setVisible(false);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException |
                  InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
-          Notification.show("Falsches Passwort");
+          Notification.show("Falsches Passwort",10000, Notification.Position.TOP_CENTER);
         }
       });
 
@@ -94,7 +96,7 @@ public class ReadNoteView extends VerticalLayout implements HasUrlParameter<Stri
           messageLabel.setValue(decrypt);
           messageLabel.setVisible(true);
         } else {
-          Notification.show("Nachricht existiert nicht");
+          Notification.show("Nachricht existiert nicht", 10000, Notification.Position.TOP_CENTER);
         }
       } catch (Exception e) {
         passwortLayout.setVisible(true);

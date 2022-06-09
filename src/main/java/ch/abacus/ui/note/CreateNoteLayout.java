@@ -4,6 +4,7 @@ import ch.abacus.MessageService;
 import ch.abacus.data.Message;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.time.Duration;
@@ -25,7 +27,7 @@ public class CreateNoteLayout extends Div {
   private IntegerField hoursField;
   private Checkbox deleteOnRead;
   private Button createButton;
-  private TextField messageField;
+  private TextArea messageField;
   private TextField passwordField;
 
   public CreateNoteLayout(MessageService messageService) {
@@ -43,15 +45,14 @@ public class CreateNoteLayout extends Div {
   }
 
   private TextField createPasswordField() {
-    TextField messageField = new TextField();
-    messageField.setHelperText("Passwort");
+    TextField messageField = new TextField("Passwort");
     return messageField;
   }
 
-  private TextField createMessageField() {
-    TextField messageField = new TextField();
+  private TextArea createMessageField() {
+    TextArea messageField = new TextArea("Nachricht");
+    messageField.setMinWidth(40, Unit.REM);
     messageField.setSizeFull();
-    messageField.setHelperText("Nachricht");
     return messageField;
   }
 
@@ -82,7 +83,7 @@ public class CreateNoteLayout extends Div {
 
   private Component createDurationField() {
     HorizontalLayout layout = new HorizontalLayout();
-    layout.setAlignItems(FlexComponent.Alignment.START);
+    layout.setAlignItems(FlexComponent.Alignment.END);
     minutesField = createTimeField("Minuten", 60, 0);
     hoursField = createTimeField("Stunden", 48, 24);
     deleteOnRead = createCheckbox("Nach Zugriff löschen", true);
@@ -102,6 +103,11 @@ public class CreateNoteLayout extends Div {
     integerField.setMin(0);
     integerField.setValue(defaultValue);
     return integerField;
+  }
+
+  public void clear(){
+    messageField.setValue("");
+    passwordField.setValue("");
   }
 
 }
