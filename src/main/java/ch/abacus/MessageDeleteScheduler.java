@@ -32,7 +32,7 @@ public class MessageDeleteScheduler {
         this.repo = repo;
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 1000)
     public void cleanMessages() {
         List<Message> toBeDeletedMessages = repo.getAllMessages().stream()
                 .filter(Message::isDurationOver)
