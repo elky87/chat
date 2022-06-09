@@ -29,6 +29,7 @@ import java.security.spec.KeySpec;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -73,15 +74,19 @@ public class EncryptionService {
         return message;
     }
 
+    public List<Message> getMessageCountInMap() { //primary for testing
+        return messageRepository.getAllMessages();
+    }
+
     public String encrypt(String input, String password) throws NoSuchPaddingException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
+                                                                InvalidAlgorithmParameterException, InvalidKeyException,
+                                                                BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
 
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, getKeyFromPassword(password), generateIv());
         byte[] cipherText = cipher.doFinal(input.getBytes());
         return Base64.getEncoder()
-                .encodeToString(cipherText);
+                     .encodeToString(cipherText);
     }
 
     public String decrypt(String cipherText, String password) throws NoSuchPaddingException, NoSuchAlgorithmException,

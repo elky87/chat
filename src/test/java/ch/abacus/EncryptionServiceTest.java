@@ -20,6 +20,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.Duration;
+import java.util.Optional;
 
 import ch.abacus.data.Message;
 import org.junit.jupiter.api.Assertions;
@@ -48,10 +49,15 @@ class EncryptionServiceTest {
 
     @Test
     void generateMessage() throws Exception {
-        final Message message = encryptionService.generateMessage("geheim", "password", Duration.ZERO, false);
+        Assertions.assertEquals(0, encryptionService.getMessageCountInMap().size());
+        final Message message = encryptionService.generateMessage("geheim", "password", Duration.ofDays(1), true);
         Assertions.assertEquals(encryptionService.encrypt("geheim", "password"), message.getContent());
-        Assertions.assertEquals(Duration.ZERO, message.getSelfDestruct());
-        Assertions.assertFalse(message.isSelfDestructAfterRead());
+        Assertions.assertEquals(Duration.ofDays(1), message.getSelfDestruct());
+        Assertions.assertTrue(message.isSelfDestructAfterRead());
+        Assertions.assertEquals(1, encryptionService.getMessageCountInMap().size());
+
+        final Optional<Message> sameMessage = encryptionService.getMessage(encryptionService.getMessageCountInMap().stream().findFirst().get().getId());
+        Assertions.assertEquals(0, encryptionService.getMessageCountInMap().size());
     }
 
 }
