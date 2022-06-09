@@ -14,16 +14,22 @@ package ch.abacus;
 
 import ch.abacus.data.Message;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class MessageRepository {
 
-    private Map<UUID, Message> messages = new HashMap<>();
+    private static final MessageRepository INSTANCE = new MessageRepository();
 
-    public Optional<Message> getMessage(UUID uuid){
+    public static MessageRepository getInstance() {
+        return INSTANCE;
+    }
+
+    private MessageRepository() {
+    }
+
+    private final Map<UUID, Message> messages = new HashMap<>();
+
+    public Optional<Message> getMessage(UUID uuid) {
         return null;
     }
 
@@ -33,6 +39,10 @@ public class MessageRepository {
 
     public void deleteMessage(UUID uuid) {
 
+    }
+
+    public List<Message> getAllMessages() {
+        return new ArrayList<>(messages.values());
     }
 
 }

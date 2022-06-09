@@ -12,9 +12,29 @@
  */
 package ch.abacus;
 
-public class MessageDeleteScheduler {
+import ch.abacus.data.Message;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
+public class MessageDeleteScheduler implements Runnable {
 
+    private final MessageRepository repo;
 
+    public MessageDeleteScheduler(MessageRepository repo) {
+        this.repo = repo;
+    }
+
+    @Override
+    public void run() {
+
+        List<Message> toBeDeletedMessages = repo.getAllMessages().stream()
+                .filter(Message::isDurationOver)
+                .collect(Collectors.toList());
+
+        for (Message toBeDeletedMessage : toBeDeletedMessages) {
+            repo.deleteMessage(toBeDeletedMessage.getId());
+        }
+
+    }
 }
