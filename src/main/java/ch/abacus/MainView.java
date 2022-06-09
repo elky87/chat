@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -40,6 +41,14 @@ public class MainView extends VerticalLayout {
      * @param service The message service. Automatically injected Spring managed bean.
      */
     public MainView(@Autowired GreetService service) {
+
+        setSizeFull();
+        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        addClassName("main-view");
+
+        H1 header = new H1("AbaChat");
+        header.getElement().getThemeList().add("dark");
+        add(header);
 
         // Use TextField for standard text input
         TextField textField = new TextField("Your name");
