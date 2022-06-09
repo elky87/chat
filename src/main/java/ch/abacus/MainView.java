@@ -1,13 +1,12 @@
 package ch.abacus;
 
-import ch.abacus.data.ChatRoom;
 import ch.abacus.ui.note.CreateNoteView;
-import ch.abacus.view.ChatRoomView;
 import ch.abacus.view.ChatView;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
@@ -58,19 +57,21 @@ public class MainView extends VerticalLayout {
         layout.setWidthFull();
         layout.setHeight("500px");
 
-        Button noteButton = new Button("Ask - Note");
+        //Button noteButton = new Button("Ask - Note");
+        final Button noteButton = new Button(new Image("image/sticky-note-line.png", "stickyNote"));
 
         noteButton.setWidth(50, Unit.PERCENTAGE);
         noteButton.setHeight(50, Unit.PERCENTAGE);
 
         noteButton.addClickListener(e ->
-                noteButton.getUI().ifPresent(ui -> ui.navigate(CreateNoteView.class)));
+                                        noteButton.getUI().ifPresent(ui -> ui.navigate(CreateNoteView.class)));
 
-        Button chatButton = new Button("Ask - Chat");
+        //Button chatButton = new Button("Ask - Chat");
+        Button chatButton = new Button(new Image("image/chat-private-fill.png", "privateChat"));
         chatButton.setWidth(50, Unit.PERCENTAGE);
         chatButton.setHeight(50, Unit.PERCENTAGE);
         chatButton.addClickListener(e ->
-                chatButton.getUI().ifPresent(ui -> ui.navigate(ChatView.class)));
+                                        chatButton.getUI().ifPresent(ui -> ui.navigate(ChatView.class)));
 
         layout.add(noteButton, chatButton);
 
