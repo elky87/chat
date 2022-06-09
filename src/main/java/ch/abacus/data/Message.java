@@ -16,6 +16,9 @@ public class Message {
   private Instant timestamp;
   private boolean selfDestructAfterRead;
 
+  public Message() {
+  }
+
   public Message(String userName, String content) {
     this.userName = userName;
     this.content = content;
