@@ -38,8 +38,8 @@ public class MessageService {
         return messageRepository.getAllMessages();
     }
 
-    public Message generateMessage(String unencryptedMessage, String password, Duration duration, boolean selfDestructAfterRead) throws Exception {
-        final String encryptedMessage = encryptionService.encrypt(unencryptedMessage, password);
+    public Message generateMessage(String unencryptedMessage, String password, Duration duration, boolean selfDestructAfterRead) {
+        final String encryptedMessage = encryptionService.encryptWithoutException(unencryptedMessage, password);
         final Message message = new Message();
         message.setId(UUID.randomUUID());
         message.setContent(encryptedMessage);
