@@ -41,6 +41,14 @@ public class EncryptionService {
                 .encodeToString(cipherText);
     }
 
+    public String encryptWithoutException(String input, String password) {
+        try {
+            return encrypt(input, password);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String decrypt(String cipherText, String password) throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, InvalidKeyException,
             BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
@@ -50,6 +58,15 @@ public class EncryptionService {
         byte[] plainText = cipher.doFinal(Base64.getDecoder()
                 .decode(cipherText));
         return new String(plainText);
+    }
+
+    public String decryptWithoutException(String cipherText, String password) {
+
+        try {
+            return decrypt(cipherText, password);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private SecretKey getKeyFromPassword(String password)
