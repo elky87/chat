@@ -1,16 +1,23 @@
 package ch.abacus;
 
+import ch.abacus.data.Message;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.UnicastProcessor;
+
+import java.util.UUID;
 
 /**
  * A sample Vaadin view class.
@@ -34,6 +41,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 @CssImport("./styles/styles.css")
 public class MainView extends VerticalLayout {
 
+    private String username;
+    private final UnicastProcessor<Message> publisher;
+    private final Flux<Message> messages;
+    private MessageList messageList;
+
     /**
      * Construct a new Vaadin view.
      * <p>
@@ -41,9 +53,11 @@ public class MainView extends VerticalLayout {
      *
      * @param service The message service. Automatically injected Spring managed bean.
      */
-    public MainView(@Autowired GreetService service) {
-
-        setSizeFull();
+    public MainView(@Autowired GreetService service,
+                    UnicastProcessor<Message> publisher,
+                    Flux<Message> messages) {
+        this.publisher = publisher;
+        this.messages = messages;
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         addClassName("main-view");
 
@@ -51,26 +65,58 @@ public class MainView extends VerticalLayout {
         header.getElement().getThemeList().add("dark");
         add(header);
 
-        // Use TextField for standard text input
-        TextField textField = new TextField("Your name");
-        textField.addThemeName("bordered");
+        askUsername();
+    }
 
-        // Button click listeners can be defined as lambda expressions
-        Button button = new Button("Say hello",
-                e -> Notification.show(service.greet(textField.getValue())));
+    private void askUsername() {
+        HorizontalLayout layout = new HorizontalLayout();
+        TextField usernameField = new TextField();
+        usernameField.setHelperText("Benutzername");
+        Button startButton = new Button("Chat starten");
+        startButton.addClickShortcut(Key.ENTER);
+        startButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        startButton.addClickListener(click -> {
+            username = usernameField.getValue();
+            remove(layout);
+            showChat();
+        });
 
-        // Theme variants give you predefined extra styles for components.
-        // Example: Primary button has a more prominent look.
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        layout.add(usernameField, startButton);
+        add(layout);
+    }
 
-        // You can specify keyboard shortcuts for buttons.
-        // Example: Pressing enter in this view clicks the Button.
-        button.addClickShortcut(Key.ENTER);
+    private void showChat() {
+        messageList = new MessageList();
+        add(messageList, createInputLayout());
+        expand(messageList);
+    }
 
-        // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
-        addClassName("centered-content");
 
-        add(textField, button);
+    private Component createInputLayout() {
+        HorizontalLayout layout = new HorizontalLayout();
+
+        TextField messageField = new TextField();
+        Button sendButton = new Button("Send");
+        sendButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        sendButton.addClickListener(click -> {
+            publisher.onNext(new Message(username, messageField.getValue()));
+            messageField.clear();
+            messageField.focus();
+
+            messages.subscribe(message -> {
+                messageList.add(
+                    new Paragraph(message.getUserName() + ": " +
+                                  message.getContent()));
+            });
+        });
+        messageField.focus();
+
+        layout.add(messageField, sendButton);
+
+        layout.setWidth("100%");
+        layout.expand(messageField);
+        return layout;
     }
 
 }
