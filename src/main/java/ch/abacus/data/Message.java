@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Message {
 
   private UUID id;
-  private String userName;
+  private User user;
   private String content;
   private Duration selfDestruct;
   private Instant timestamp;
@@ -19,17 +19,9 @@ public class Message {
   public Message() {
   }
 
-  public Message(String userName, String content) {
-    this.userName = userName;
+  public Message(User user, String content) {
+    this.user = user;
     this.content = content;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public String getContent() {
-    return content;
   }
 
   public boolean isDurationOver() {
